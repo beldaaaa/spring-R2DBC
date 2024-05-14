@@ -1,4 +1,4 @@
-package springframework.springr2dbc.repositories;
+package springframework.springr2dbc.repository;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import springframework.springr2dbc.domain.Beer;

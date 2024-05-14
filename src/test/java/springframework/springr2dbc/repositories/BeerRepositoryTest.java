@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.context.annotation.Import;
 import springframework.springr2dbc.config.DatabaseConfig;
 import springframework.springr2dbc.domain.Beer;
+import springframework.springr2dbc.repository.BeerRepository;
 
 import java.math.BigDecimal;
 
