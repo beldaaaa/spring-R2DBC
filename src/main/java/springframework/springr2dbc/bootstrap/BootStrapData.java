@@ -3,8 +3,8 @@ package springframework.springr2dbc.bootstrap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import springframework.springr2dbc.repository.BeerRepository;
 import springframework.springr2dbc.domain.Beer;
+import springframework.springr2dbc.repository.BeerRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

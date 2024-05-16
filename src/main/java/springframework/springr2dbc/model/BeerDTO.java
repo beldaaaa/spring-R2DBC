@@ -1,5 +1,7 @@
 package springframework.springr2dbc.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +16,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BeerDTO {
     private Integer id;
+
+    @NotBlank
+    @Size(min = 2, max = 255)
     private String beerName;
+    @NotBlank
+    @Size(min = 2, max = 255)
     private String beerStyle;
+    @NotBlank
+    @Size(max = 25)
     private String upc;
     private Integer quantityOnHand;
     private BigDecimal price;
