@@ -20,21 +20,21 @@ public class BeerServiceImpl implements BeerService {
     public Flux<BeerDTO> beerList() {
 
         return beerRepository.findAll()
-                .map(beerMapper::beerToBeerDto);
+                .map(beerMapper::beerToBeerDTO);
     }
 
     @Override
     public Mono<BeerDTO> getBeerById(Integer beerId) {
 
         return beerRepository.findById(beerId)
-                .map(beerMapper::beerToBeerDto);
+                .map(beerMapper::beerToBeerDTO);
     }
 
     @Override
     public Mono<BeerDTO> saveBeer(BeerDTO beerDTO) {
 
         return beerRepository.save(beerMapper.beerDtoToBeer(beerDTO))
-                .map(beerMapper::beerToBeerDto);
+                .map(beerMapper::beerToBeerDTO);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class BeerServiceImpl implements BeerService {
                     foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
                     return foundBeer;
                 }).flatMap(beerRepository::save)//setting new publisher => flatmap
-                .map(beerMapper::beerToBeerDto);
+                .map(beerMapper::beerToBeerDTO);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BeerServiceImpl implements BeerService {
                     }
                     return foundBeer;
                 }).flatMap(beerRepository::save)
-                .map(beerMapper::beerToBeerDto);
+                .map(beerMapper::beerToBeerDTO);
     }
 
     @Override

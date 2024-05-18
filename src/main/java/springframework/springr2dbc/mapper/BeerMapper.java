@@ -8,5 +8,5 @@ import springframework.springr2dbc.model.BeerDTO;
 public interface BeerMapper {
 
 Beer beerDtoToBeer(BeerDTO beerDTO);
-BeerDTO beerToBeerDto(Beer beer);
+BeerDTO beerToBeerDTO(Beer beer);
 }

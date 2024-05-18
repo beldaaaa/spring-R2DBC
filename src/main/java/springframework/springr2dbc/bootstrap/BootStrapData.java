@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import springframework.springr2dbc.domain.Beer;
+import springframework.springr2dbc.domain.Customer;
 import springframework.springr2dbc.repository.BeerRepository;
+import springframework.springr2dbc.repository.CustomerRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,10 +17,12 @@ import java.util.Arrays;
 public class BootStrapData implements CommandLineRunner {
 
     private final BeerRepository beerRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public void run(String... args) {
         loadBeerData();
+        loadCustomerData();
     }
 
     private void loadBeerData() {
@@ -56,6 +60,22 @@ public class BootStrapData implements CommandLineRunner {
             }
         });
 
+    }
+
+    private void loadCustomerData() {
+        customerRepository.count().subscribe(count -> {
+            Customer customer1 = Customer.builder()
+                    .customerName("Gonzales")
+                    .build();
+            Customer customer2 = Customer.builder()
+                    .customerName("Esmeralda")
+                    .build();
+            Customer customer3 = Customer.builder()
+                    .customerName("Helmut")
+                    .build();
+
+            customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3)).subscribe();
+        });
     }
 }
 
