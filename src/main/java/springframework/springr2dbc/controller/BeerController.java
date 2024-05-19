@@ -13,29 +13,36 @@ import springframework.springr2dbc.service.BeerService;
 @RestController
 @RequiredArgsConstructor
 public class BeerController {
-    private static final String LOCALHOST = "http://localhost:8080";
-    private static final String BEER_PATH = "/api/v2/beer";
-    private static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
+    static final String LOCALHOST = "http://localhost:8080";
+    static final String BEER_PATH = "/api/v2/beer";
+    static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
     private final BeerService beerService;
 
     @DeleteMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> deleteBeer(@PathVariable Integer beerId) {
 
-        return beerService.deleteBeer(beerId).then(Mono.fromCallable(() -> ResponseEntity.noContent().build()));
+        return beerService.deleteBeer(beerId)
+                .thenReturn(ResponseEntity
+                        .noContent()
+                        .build());
     }
 
     @PatchMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> patchBeer(@PathVariable Integer beerId, @Validated @RequestBody BeerDTO beerDTO) {
 
         return beerService.patchBeer(beerId, beerDTO)
-                .map(savedBeer -> ResponseEntity.ok().build());
+                .map(savedBeer -> ResponseEntity
+                        .ok()
+                        .build());
     }
 
     @PutMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> updateBeer(@PathVariable Integer beerId, @Validated @RequestBody BeerDTO beerDTO) {
 
         return beerService.updateBeer(beerId, beerDTO)
-                .map(savedDto -> ResponseEntity.ok().build());
+                .map(savedDto -> ResponseEntity
+                        .noContent()
+                        .build());
     }
 
     @PostMapping(BEER_PATH)
@@ -43,7 +50,11 @@ public class BeerController {
 
         return beerService.saveBeer(beerDTO)
                 .map(savedDto -> ResponseEntity.created(UriComponentsBuilder
-                        .fromHttpUrl(LOCALHOST + BEER_PATH + "/" + savedDto.getId()).build().toUri()).build());
+                                .fromHttpUrl(LOCALHOST + BEER_PATH + "/" + savedDto
+                                        .getId())
+                                .build()
+                                .toUri())
+                        .build());
     }
 
     @GetMapping(BEER_PATH_ID)

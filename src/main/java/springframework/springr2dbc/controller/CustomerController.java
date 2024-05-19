@@ -10,32 +10,40 @@ import reactor.core.publisher.Mono;
 import springframework.springr2dbc.model.CustomerDTO;
 import springframework.springr2dbc.service.CustomerService;
 
+import static springframework.springr2dbc.controller.BeerController.LOCALHOST;
+
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
-    private static final String LOCALHOST = "http://localhost:8080";
-    private static final String CUSTOMER_PATH = "/api/v2/customer";
-    private static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
+    static final String CUSTOMER_PATH = "/api/v2/customer";
+    static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
     private final CustomerService customerService;
 
     @DeleteMapping(CUSTOMER_PATH_ID)
     Mono<ResponseEntity<Void>> deleteCustomer(@PathVariable Integer customerId) {
 
-        return customerService.deleteCustomer(customerId).then(Mono.fromCallable(() -> ResponseEntity.noContent().build()));
+        return customerService.deleteCustomer(customerId)
+                .thenReturn(ResponseEntity
+                        .noContent()
+                        .build());
     }
 
     @PatchMapping(CUSTOMER_PATH_ID)
     Mono<ResponseEntity<Void>> patchCustomer(@PathVariable Integer customerId, @Validated @RequestBody CustomerDTO customerDTO) {
 
         return customerService.patchCustomer(customerId, customerDTO)
-                .map(savedCustomer -> ResponseEntity.ok().build());
+                .map(savedCustomer -> ResponseEntity
+                        .ok()
+                        .build());
     }
 
     @PutMapping(CUSTOMER_PATH_ID)
     Mono<ResponseEntity<Void>> updateCustomer(@PathVariable Integer customerId, @Validated @RequestBody CustomerDTO customerDTO) {
 
         return customerService.updateCustomer(customerId, customerDTO)
-                .map(savedDto -> ResponseEntity.ok().build());
+                .map(savedDto -> ResponseEntity
+                        .noContent()
+                        .build());
     }
 
     @PostMapping(CUSTOMER_PATH)
@@ -43,7 +51,11 @@ public class CustomerController {
 
         return customerService.saveCustomer(customerDTO)
                 .map(savedDto -> ResponseEntity.created(UriComponentsBuilder
-                        .fromHttpUrl(LOCALHOST + CUSTOMER_PATH + "/" + savedDto.getId()).build().toUri()).build());
+                                .fromHttpUrl(LOCALHOST + CUSTOMER_PATH + "/" + savedDto
+                                        .getId())
+                                .build()
+                                .toUri())
+                        .build());
     }
 
     @GetMapping(CUSTOMER_PATH_ID)
