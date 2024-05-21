@@ -20,7 +20,7 @@ import static springframework.springr2dbc.controller.BeerController.LOCALHOST;
 @SpringBootTest
 @AutoConfigureWebTestClient
 class BeerControllerTest {
-
+    int falseId = 128;
     @Autowired
     WebTestClient webTestClient;
 
@@ -33,16 +33,55 @@ class BeerControllerTest {
                 .quantityOnHand(1)
                 .build();
     }
-    @Order(5)
-@Test
-void deleteBeer(){
+
+    @Test
+    void deleteBeerNotFound() {
         webTestClient.delete()
-                .uri(BeerController.BEER_PATH_ID,1)
+                .uri(BeerController.BEER_PATH_ID, falseId)
                 .exchange()
-                .expectStatus()
-                .isNoContent();
-}
-    @Order(4)
+                .expectStatus().isNotFound();
+    }
+
+    @Order(6)
+    @Test
+    void deleteBeer() {
+        webTestClient.delete()
+                .uri(BeerController.BEER_PATH_ID, 1)
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
+    void patchIdNotFound() {
+        webTestClient.patch()
+                .uri(BeerController.BEER_PATH_ID, falseId)
+                .body(Mono.just(helperBeer()), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void updateBeerNotFound() {
+        webTestClient.put()
+                .uri(BeerController.BEER_PATH_ID, falseId)
+                .body(Mono.just(helperBeer()), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void updateBeerBadRequest() {
+        Beer wrongBeer = helperBeer();
+        wrongBeer.setBeerName("");
+
+        webTestClient.put()
+                .uri(BeerController.BEER_PATH_ID, 3)
+                .body(Mono.just(wrongBeer), BeerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Order(5)
     @Test
     void updateBeer() {
         webTestClient.put()
@@ -51,6 +90,19 @@ void deleteBeer(){
                 .exchange()
                 .expectStatus().isNoContent();
     }
+
+    @Test
+    void createWrongDataBeer() {
+        Beer wrongBeer = helperBeer();
+        wrongBeer.setBeerName("?");
+
+        webTestClient.post().uri(BeerController.BEER_PATH)
+                .body(Mono.just(wrongBeer), BeerDTO.class)
+                .header("Content-Type", "application/json")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
     @Order(3)
     @Test
     void createBeer() {
@@ -62,6 +114,15 @@ void deleteBeer(){
                 .expectStatus().isCreated()
                 .expectHeader().location(LOCALHOST + BeerController.BEER_PATH + "/5");
     }
+
+    @Test
+    void findByIdNotFound() {
+        webTestClient.get()
+                .uri(BeerController.BEER_PATH_ID, falseId)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
     @Order(2)
     @Test
     void findById() {
@@ -72,7 +133,8 @@ void deleteBeer(){
                 .expectHeader().valueEquals("Content-Type", "application/json")
                 .expectBody(BeerDTO.class);
     }
-@Order(1)
+
+    @Order(1)
     @Test
     void beerList() {
         webTestClient.get()

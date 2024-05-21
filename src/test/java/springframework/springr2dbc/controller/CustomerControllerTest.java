@@ -19,6 +19,7 @@ import static springframework.springr2dbc.controller.CustomerController.CUSTOMER
 @SpringBootTest
 @AutoConfigureWebTestClient
 class CustomerControllerTest {
+    int falseId = 128;
     @Autowired
     WebTestClient webTestClient;
 
@@ -29,17 +30,54 @@ class CustomerControllerTest {
     }
 
     @Test
-    @Order(5)
+    void deleteCustomerNotFound() {
+        webTestClient.delete()
+                .uri(CustomerController.CUSTOMER_PATH_ID, falseId)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @Order(6)
     void deleteCustomer() {
         webTestClient.delete()
                 .uri(CustomerController.CUSTOMER_PATH_ID, 1)
                 .exchange()
-                .expectStatus()
-                .isNoContent();
+                .expectStatus().isNoContent();
     }
 
     @Test
-    @Order(4)
+    void patchCustomerNotFound() {
+        webTestClient.patch()
+                .uri(CustomerController.CUSTOMER_PATH_ID, falseId)
+                .body(Mono.just(helperCustomer()), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void updateCustomerNotFound() {
+        webTestClient.put()
+                .uri(CustomerController.CUSTOMER_PATH_ID, falseId)
+                .body(Mono.just(helperCustomer()), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void updateCustomerBadRequest() {
+        Customer wrongCustomer = helperCustomer();
+        wrongCustomer.setCustomerName("");
+
+        webTestClient.put()
+                .uri(CustomerController.CUSTOMER_PATH_ID, 2)
+                .body(Mono.just(wrongCustomer), CustomerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    @Order(5)
     void updateCustomer() {
         webTestClient.put()
                 .uri(CustomerController.CUSTOMER_PATH_ID, 3)
@@ -80,6 +118,6 @@ class CustomerControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().valueEquals("Content-type", "application/json")
-                .expectBody().jsonPath("$.size()").isEqualTo(2);
+                .expectBody().jsonPath("$.size()").isEqualTo(3);
     }
 }
