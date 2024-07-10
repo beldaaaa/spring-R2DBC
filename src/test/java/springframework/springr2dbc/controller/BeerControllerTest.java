@@ -130,7 +130,7 @@ class BeerControllerTest {
                 .header("Content-Type", "application/json")
                 .exchange()
                 .expectStatus().isCreated()
-                .expectHeader().location(LOCALHOST + BeerController.BEER_PATH + "/5");
+                .expectHeader().location(LOCALHOST + BeerController.BEER_PATH + "/4");
     }
 
     @Test
@@ -166,6 +166,6 @@ class BeerControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().valueEquals("Content-Type", "application/json")
-                .expectBody().jsonPath("$.size()").isEqualTo(4);
+                .expectBody().jsonPath("$.size()").isEqualTo(3);
     }
 }
